@@ -1,0 +1,1 @@
+#firestore okuma yazma işlemleri burda olacak

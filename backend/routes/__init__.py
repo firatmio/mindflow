@@ -1,0 +1,1 @@
+#burası boş kalcak sadece backend klasörünün bir python paketi olduğunu göstermek için var, buraya kod yazmayacağız, diğer dosyalarda yazdıklarımızı buraya import edeceğiz ve main.py de kullanacağız

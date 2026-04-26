@@ -1,0 +1,1 @@
+#günlük ekleme ve listeleme endpointleri burda olacak

@@ -1,0 +1,1 @@
+//backend e fetch istekleri burda olacak

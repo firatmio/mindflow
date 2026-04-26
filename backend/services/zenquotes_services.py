@@ -1,0 +1,1 @@
+#zenquotes api çağrıları burda olacak
