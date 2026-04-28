@@ -1,1 +1,7 @@
 #python bağımlılıklarıymış benim buraya yazdıklarımı terminalden pip install -r requirements.txt komutuyla yükleyebilirsiniz canlar
+
+fastapi
+uvicorn
+python-dotenv
+google-generativeai
+httpx

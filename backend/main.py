@@ -25,7 +25,17 @@ class JournalEntry(BaseModel):
     stress: int | None = None
 
 
-app = FastAPI("MindFlow API", version="1.0.0")
+# --- Kişi 2 (Alara) değişiklikleri ---
+# 1. FastAPI başlatma düzeltildi: "MindFlow API" → title="MindFlow API"
+# 2. Duygu analizi ve olumlamalar routes/ altına taşındı, buradan import edildi
+# 3. Static mount'lar kapatıldı (frontend/css, js, assets klasörleri yok — Vite kullanılıyor)
+# 4. /api/emotion/analyze → routes/emotion.py (Gemini AI ile)
+# 5. /api/affirmation/today → routes/affirmation.py (Gemini + ZenQuotes ile)
+# ------------------------------------
+from routes.emotion import router as emotion_router
+from routes.affirmation import router as affirmation_router
+
+app = FastAPI(title="MindFlow API", version="1.0.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -34,9 +44,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.mount("/css", StaticFiles(directory=FRONTEND_DIR / "css"), name="css")
-app.mount("/js", StaticFiles(directory=FRONTEND_DIR / "js"), name="js")
-app.mount("/assets", StaticFiles(directory=FRONTEND_DIR / "assets"), name="assets")
+# app.mount("/css", StaticFiles(directory=FRONTEND_DIR / "css"), name="css")
+# app.mount("/js", StaticFiles(directory=FRONTEND_DIR / "js"), name="js")
+# app.mount("/assets", StaticFiles(directory=FRONTEND_DIR / "assets"), name="assets")
+
+app.include_router(emotion_router)
+app.include_router(affirmation_router)
 
 
 def load_store() -> dict:
@@ -150,15 +163,7 @@ def health():
     return {"message": "MindFlow API çalışıyor", "timestamp": datetime.utcnow().isoformat()}
 
 
-@app.post("/api/emotion/analyze")
-def emotion_analyze(payload: JournalEntry):
-    if not payload.text.strip():
-        raise HTTPException(status_code=400, detail="Metin boş olamaz")
-    return {
-        "text": payload.text,
-        **analyze_text(payload.text),
-        "created_at": datetime.utcnow().isoformat(),
-    }
+# @app.post("/api/emotion/analyze") — routes/emotion.py'a taşındı
 
 
 @app.post("/api/journal")
@@ -184,7 +189,4 @@ def list_journal_entries():
     return {"items": store.get("journal", [])[:100]}
 
 
-@app.get("/api/affirmation/today")
-def today_affirmation():
-    store = load_store()
-    return {"affirmation": build_affirmation(store.get("journal", []))}
+# @app.get("/api/affirmation/today") — routes/affirmation.py'a taşındı
