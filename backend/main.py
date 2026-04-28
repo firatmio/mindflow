@@ -2,9 +2,10 @@ from datetime import datetime
 from pathlib import Path
 import json
 import re
+import time
 from typing import List
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -50,6 +51,13 @@ app.add_middleware(
 
 app.include_router(emotion_router)
 app.include_router(affirmation_router)
+
+@app.middleware("http")
+async def add_response_time(request: Request, call_next):
+    start = time.time()
+    response = await call_next(request)
+    response.headers["X-Response-Time"] = f"{(time.time() - start) * 1000:.0f}ms"
+    return response
 
 
 def load_store() -> dict:
