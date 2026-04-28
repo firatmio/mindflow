@@ -1,3 +1,4 @@
+// Dashboard akisi: form gonderimi, render, KPI ve grafikler.
 import {
 	analyzeJournal,
 	getDailyAffirmation,
@@ -10,6 +11,7 @@ import {
 } from "./api.js";
 import { renderMoodCharts } from "./charts.js";
 
+// localStorage ve backend ile senkron state.
 const state = {
 	entries: [],
 	profile: getStoredProfile(),
@@ -50,6 +52,7 @@ function updateStat(id, value) {
 	}
 }
 
+// KPI yardimcilari.
 function calcAverage(entries, key) {
 	if (!entries.length) {
 		return 0;
@@ -77,6 +80,7 @@ function calcDominantMood(entries) {
 	return getMoodLabel(dominant);
 }
 
+// UI render yardimcilari.
 function renderProfile() {
 	const nameInput = byId("profile-name");
 	const focusInput = byId("profile-focus");
@@ -177,6 +181,7 @@ async function renderAffirmation() {
 	}
 }
 
+// Gonderim akisi: analiz -> kaydet -> render -> grafik guncelle.
 async function handleSubmit(event) {
 	event.preventDefault();
 
@@ -214,6 +219,7 @@ async function handleSubmit(event) {
 	}
 }
 
+// UI kontrollerini localStorage ayarlarina bagla.
 function wireProfileControls() {
 	const profileName = byId("profile-name");
 	const profileFocus = byId("profile-focus");
@@ -247,6 +253,7 @@ function wireZenButton() {
 	});
 }
 
+// Dashboard sayfasi giris noktasi.
 async function init() {
 	const form = byId("journal-form");
 	if (!form) {

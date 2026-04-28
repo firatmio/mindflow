@@ -1,5 +1,7 @@
+// Zen modu: nefes animasyonu + ortam sesi.
 import { getFallbackZenQuote, getZenQuote, getStoredSettings } from "./api.js";
 
+// Zen modu kontrolleri icin runtime state.
 const state = {
 	audioContext: null,
 	oscillators: [],
@@ -9,6 +11,7 @@ const state = {
 	settings: getStoredSettings(),
 };
 
+// Nefes al/tut/ver/dinlen dongusu icin sureli fazlar.
 const breathPhases = [
 	{ label: "Nefes Al", duration: 4000, scale: 1.08 },
 	{ label: "Tut", duration: 2500, scale: 1.08 },
@@ -39,6 +42,7 @@ function setPhase(phaseIndex) {
 	}
 }
 
+// Timer ile nefes fazlarini dondurur.
 function scheduleBreathing() {
 	if (state.timer) {
 		window.clearTimeout(state.timer);
@@ -54,6 +58,7 @@ function scheduleBreathing() {
 	advance();
 }
 
+// WebAudio ile yumusak ortam sesi uretir.
 function createAmbientSound() {
 	if (state.audioContext || !state.settings.zenSoundEnabled) {
 		return;
@@ -104,6 +109,7 @@ function stopAmbientSound() {
 	state.oscillators = [];
 }
 
+// Nefes dongusunu baslat/duraklat.
 async function toggleZen() {
 	const button = byId("zen-toggle");
 	const status = byId("zen-status");
@@ -126,6 +132,7 @@ async function toggleZen() {
 	}
 }
 
+// Zen ekrani icin sakinlestirici alinti/olumlama ceker.
 async function renderZenQuote() {
 	const quoteElement = byId("zen-quote");
 	if (!quoteElement) {
@@ -154,6 +161,7 @@ function wireControls() {
 	});
 }
 
+// Zen sayfasi giris noktasi.
 async function initZenPage() {
 	wireControls();
 	await renderZenQuote();

@@ -1,3 +1,4 @@
+// Frontend icin merkezi API ve yerel yedek yardimcilari.
 const STORAGE_KEYS = {
 	profile: "mindflow.profile",
 	settings: "mindflow.settings",
@@ -11,6 +12,7 @@ const FALLBACK_QUOTES = [
 	"Kendine nazik davrandığın her an iyileşmenin parçasıdır.",
 ];
 
+// API base URL belirleme (local gelistirme veya ayni origin).
 export const apiConfig = {
 	baseUrl: getBaseUrl(),
 };
@@ -32,6 +34,7 @@ function getBaseUrl() {
 	return `${window.location.protocol}//${window.location.host}`;
 }
 
+// Profil/ayarlar/gunluk icin LocalStorage yardimcilari.
 function readJson(key, fallbackValue) {
 	try {
 		const raw = window.localStorage.getItem(key);
@@ -52,6 +55,7 @@ function buildUrl(path) {
 	return `${apiConfig.baseUrl}${path}`;
 }
 
+// Fetch sarmalayici, opsiyonel yedek (offline/demo icin).
 async function request(path, options = {}, fallbackFactory) {
 	try {
 		const response = await fetch(buildUrl(path), {
@@ -75,6 +79,7 @@ async function request(path, options = {}, fallbackFactory) {
 	}
 }
 
+// Profil ve ayar kaliciligi.
 export function getStoredProfile() {
 	return readJson(STORAGE_KEYS.profile, {
 		name: "",
@@ -101,6 +106,7 @@ export function saveStoredSettings(settings) {
 	return settings;
 }
 
+// Gunluk cache yardimcilari.
 export function getLocalJournalEntries() {
 	return readJson(STORAGE_KEYS.journal, []);
 }
@@ -114,6 +120,7 @@ function getKeywordScore(text, words) {
 	return words.reduce((score, word) => score + (text.includes(word) ? 1 : 0), 0);
 }
 
+// Backend yoksa hafif yerel duygu analizi yedegi.
 function analyzeLocally(text) {
 	const normalized = text.toLowerCase();
 	const signals = {
@@ -154,6 +161,7 @@ function analyzeLocally(text) {
 	};
 }
 
+// Backend/yerel formatlarini tek bir schema'ya donusturur.
 function normalizeJournalEntry(entry) {
 	return {
 		id: entry.id || entry.created_at || crypto.randomUUID(),
@@ -169,6 +177,7 @@ function normalizeJournalEntry(entry) {
 	};
 }
 
+// Metni backend ile analiz et (yedek: yerel heuristic).
 export async function analyzeJournal(text) {
 	const normalizedText = String(text || "").trim();
 	if (!normalizedText) {
@@ -187,6 +196,7 @@ export async function analyzeJournal(text) {
 	};
 }
 
+// Gunluk kaydini backend'e yaz, sonra local cache guncelle.
 export async function saveJournalEntry(entry) {
 	const normalizedEntry = normalizeJournalEntry(entry);
 
@@ -202,6 +212,7 @@ export async function saveJournalEntry(entry) {
 	return normalizeJournalEntry(saved);
 }
 
+// Gunlukleri backend veya local cache'ten getir.
 export async function getJournalEntries() {
 	const response = await request("/api/journal", {}, () => ({ items: getLocalJournalEntries() }));
 	const items = Array.isArray(response) ? response : response.items || [];
@@ -210,6 +221,7 @@ export async function getJournalEntries() {
 	return normalized;
 }
 
+// Backend yoksa basit olumlama uret.
 function buildLocalAffirmation(entries) {
 	const labels = entries.slice(0, 7).map((entry) => entry.label);
 
@@ -228,11 +240,13 @@ function buildLocalAffirmation(entries) {
 	return "Dengeyi araman bile bir ilerlemedir. Bugün kendine nazik kal.";
 }
 
+// Gunluk olumlamayi cek (backend veya yerel yedek).
 export async function getDailyAffirmation() {
 	const response = await request("/api/affirmation/today", {}, () => ({ affirmation: buildLocalAffirmation(getLocalJournalEntries()) }));
 	return response.affirmation || buildLocalAffirmation(getLocalJournalEntries());
 }
 
+// Zen alintisi demo icin ayni olumlama kaynagini kullanir.
 export async function getZenQuote() {
 	const response = await request("/api/affirmation/today", {}, () => ({ affirmation: FALLBACK_QUOTES[0] }));
 	return response.affirmation || FALLBACK_QUOTES[0];

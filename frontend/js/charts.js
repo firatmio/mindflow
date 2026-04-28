@@ -1,3 +1,4 @@
+// Ruh hali trendi ve dagilim grafikleri icin Chart.js yardimcilari.
 const chartInstances = new Map();
 
 function getChartLibrary() {
@@ -17,6 +18,7 @@ function getCanvas(canvasId) {
 	return element instanceof HTMLCanvasElement ? element : null;
 }
 
+// Dagilim grafigi icin sayimlari toplar.
 function buildCounts(entries) {
 	const counts = {
 		mutlu: 0,
@@ -34,6 +36,7 @@ function buildCounts(entries) {
 	return counts;
 }
 
+// Trend grafikleri icin zaman serisi noktalarini hazirlar.
 function buildTrendPoints(entries) {
 	return entries.slice().reverse().map((entry) => ({
 		label: new Date(entry.created_at).toLocaleDateString("tr-TR", { day: "2-digit", month: "short" }),
@@ -42,6 +45,7 @@ function buildTrendPoints(entries) {
 	}));
 }
 
+// Tum ruh hali grafiklerini render eder (trend, dagilim, enerji).
 export function renderMoodCharts(entries) {
 	const Chart = getChartLibrary();
 	if (!Chart) {
@@ -151,6 +155,7 @@ export function renderMoodCharts(entries) {
 	return chartInstances;
 }
 
+// Gerekirse sayfa kapanirken grafikleri temizler.
 export function destroyMoodCharts() {
 	chartInstances.forEach((chart) => chart.destroy());
 	chartInstances.clear();
