@@ -1,1 +1,147 @@
-/*zen modu animasyonları ve stilleri burda olacak*/
+:root {
+	--zen-bg: #040507;
+	--zen-glow: rgba(14, 165, 233, 0.16);
+}
+
+.zen-page {
+	min-height: 100vh;
+	background:
+		radial-gradient(circle at top, rgba(124, 58, 237, 0.14), transparent 28%),
+		radial-gradient(circle at bottom left, rgba(232, 63, 88, 0.12), transparent 30%),
+		linear-gradient(180deg, #050608 0%, var(--zen-bg) 100%);
+	color: #f3f7fb;
+	overflow: hidden;
+}
+
+.zen-shell {
+	min-height: 100vh;
+	padding: 1.25rem;
+	position: relative;
+}
+
+.zen-topbar {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 1rem;
+	flex-wrap: wrap;
+	position: relative;
+	z-index: 1;
+}
+
+.zen-actions {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	flex-wrap: wrap;
+}
+
+.zen-switch {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	color: #c7d2e1;
+	background: rgba(255, 255, 255, 0.04);
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	border-radius: 999px;
+	padding: 0.75rem 1rem;
+}
+
+.zen-main {
+	min-height: calc(100vh - 90px);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	max-width: 920px;
+	margin: 0 auto;
+	gap: 1rem;
+	position: relative;
+	z-index: 1;
+}
+
+.zen-title {
+	font-size: clamp(2.4rem, 6vw, 5rem);
+	margin-bottom: 0;
+}
+
+.zen-copy,
+.zen-hint,
+.zen-status {
+	color: #b8c2d4;
+	font-size: 1.05rem;
+	max-width: 620px;
+}
+
+.breath-orb-wrap {
+	width: min(70vw, 420px);
+	aspect-ratio: 1;
+	display: grid;
+	place-items: center;
+	margin: 1rem 0;
+}
+
+.breath-orb {
+	width: 100%;
+	height: 100%;
+	border-radius: 50%;
+	background: radial-gradient(circle, rgba(255,255,255,0.24) 0%, rgba(14,165,233,0.16) 25%, rgba(232,63,88,0.08) 58%, rgba(255,255,255,0.02) 72%, transparent 76%);
+	box-shadow:
+		0 0 0 1px rgba(255,255,255,0.08),
+		0 0 80px rgba(14, 165, 233, 0.18),
+		0 0 160px rgba(232, 63, 88, 0.12);
+	display: grid;
+	place-items: center;
+	transform: scale(var(--breath-scale, 1));
+	transition: transform 1.8s ease-in-out, box-shadow 1.8s ease-in-out;
+	position: relative;
+	isolation: isolate;
+}
+
+.breath-orb::before {
+	content: "";
+	position: absolute;
+	inset: 10%;
+	border-radius: 50%;
+	border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.breath-orb::after {
+	content: "";
+	position: absolute;
+	inset: 24%;
+	border-radius: 50%;
+	background: radial-gradient(circle, rgba(255,255,255,0.28), transparent 72%);
+	filter: blur(4px);
+	opacity: 0.7;
+}
+
+.breath-orb span {
+	position: relative;
+	z-index: 1;
+	font-family: var(--font-display);
+	font-size: clamp(1.2rem, 2.6vw, 2rem);
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+
+.phase-in { box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.16), 0 0 90px rgba(34, 197, 94, 0.16); }
+.phase-hold { box-shadow: 0 0 0 1px rgba(14, 165, 233, 0.18), 0 0 90px rgba(14, 165, 233, 0.18); }
+.phase-out { box-shadow: 0 0 0 1px rgba(232, 63, 88, 0.18), 0 0 90px rgba(232, 63, 88, 0.16); }
+.phase-rest { box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 0 90px rgba(255,255,255,0.10); }
+
+.zen-controls {
+	margin-top: 1rem;
+}
+
+@media (max-width: 767.98px) {
+	.zen-main {
+		justify-content: flex-start;
+		padding-top: 12vh;
+	}
+
+	.breath-orb-wrap {
+		width: min(88vw, 340px);
+	}
+}
