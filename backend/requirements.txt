@@ -6,5 +6,6 @@ python-dotenv        # .env dosyasından API key okumak için
 firebase-admin       # Firebase bağlantısı: Firestore veritabanı + Authentication token doğrulama
 google-generativeai  # Gemini AI: duygu analizi ve olumlamalar için
 httpx                # ZenQuotes API'ye istek atmak için
+deep-translator      # Kişi 2 tarafından eklendi — metin çevirisi için
 
-# burdakiler kütühane paket şeuleri kodun tamamını main.pyden çalışırmak için terminalde önce pip install -r requirements.txt yazıp indirmek gerekiyo kolaylık olsun diye yaptım tm 
+# burdakiler kütühane paket şeuleri kodun tamamını main.pyden çalışırmak için terminalde önce pip install -r requirements.txt yazıp indirmek gerekiyo kolaylık olsun diye yaptım tm
