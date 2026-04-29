@@ -73,3 +73,25 @@ export default defineConfig([
   },
 ])
 ```
+
+## Running the frontend with the backend
+
+Set the backend base URL for the frontend by creating a `.env` file in the `frontend/` folder or copying `.env.example`:
+
+```
+VITE_API_BASE_URL=http://localhost:8000
+```
+
+Then install and start the dev server:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Notes:
+- Ensure the backend is running (FastAPI default: `uvicorn backend.main:app --reload --port 8000`).
+- The frontend reads `VITE_API_BASE_URL` at build/dev time. For production builds, set the correct API URL before `npm run build`.
+- If your API requires authentication, obtain and store the Firebase token in `localStorage` under `firebaseToken` (used by the example API wrapper).
+
