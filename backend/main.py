@@ -39,8 +39,8 @@ class JournalEntry(BaseModel):
 # 7. Config.py Gemini API'ye güncellendi (Claude yerine)
 # TODO: Services import sorunları çözüldüğünde emotion ve affirmation router'ları ekle
 # ------------------------------------
-# from routes.emotion import router as emotion_router
-# from routes.affirmation import router as affirmation_router
+from routes.emotion import router as emotion_router
+from routes.affirmation import router as affirmation_router
 # from routes.journal import router as journal_router
 
 
@@ -111,9 +111,9 @@ app.add_middleware(
 # app.mount("/js", StaticFiles(directory=FRONTEND_DIR / "js"), name="js")
 # app.mount("/assets", StaticFiles(directory=FRONTEND_DIR / "assets"), name="assets")
 
-# app.include_router(emotion_router)
-# app.include_router(affirmation_router)
-# app.include_router(journal_router)  # TODO: Services ve Kişi 3 yazana kadar bekle
+app.include_router(emotion_router)
+app.include_router(affirmation_router)
+# app.include_router(journal_router)  # TODO: Kişi 3 tamamladığında aç
 
 @app.middleware("http")
 async def add_response_time(request: Request, call_next):

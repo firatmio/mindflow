@@ -38,18 +38,15 @@ Metin: "{text}"
     return json.loads(raw.strip())
 
 
-def generate_affirmation(recent_labels: list[str], quote: str = "", author: str = "") -> dict:
+def generate_affirmation(recent_labels: list[str]) -> dict:
     label_summary = ", ".join(recent_labels) if recent_labels else "belirsiz"
     prompt = f"""
 Sen deneyimli, empatik bir psikologsun. Kullanıcının son günlerdeki ruh hali: {label_summary}.
 
-Aşağıdaki özlü sözü Türkçeye çevir ve bu söze dayanarak kullanıcıya özel bir rehberlik mesajı yaz.
-
-Özlü söz: "{quote}" — {author}
+Kullanıcıya özel, samimi ve psikolog üslubuyla yazılmış kısa bir rehberlik mesajı yaz.
 
 Şu JSON formatında yanıt ver, başka hiçbir şey yazma:
 {{
-  "translated_quote": "özlü sözün doğal Türkçe çevirisi",
   "affirmation": "kullanıcının ruh haline özel, samimi ve psikolog gibi yazılmış 2-3 cümlelik mesaj",
   "suggestions": ["somut ve uygulanabilir öneri 1", "somut ve uygulanabilir öneri 2"]
 }}
