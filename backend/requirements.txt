@@ -3,5 +3,8 @@
 fastapi
 uvicorn
 python-dotenv
+firebase-admin
 google-generativeai
 httpx
+
+# burdakiler kütühane paket şeuleri kodun tamamını main.pyden çalışırmak için terminalde önce pip install -r requirements.txt yazıp indirmek gerekiyo kolaylık olsun diye yaptım tm 

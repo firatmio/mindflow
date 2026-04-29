@@ -1,0 +1,40 @@
+{
+  "journal": [
+    {
+      "id": "entry-1",
+      "text": "Bugün çok mutluyum! İş başarısı kazandım ve ekip beni tebrik etti. Harika bir gün oldu.",
+      "label": "mutlu",
+      "score": 0.95,
+      "energy": 85,
+      "stress": 15,
+      "created_at": "2026-04-29T17:40:06.710587"
+    },
+    {
+      "id": "entry-2",
+      "text": "Stresli bir gün geçirdim. Deadline yakınlaşıyor ve bir sürü şey yapmam gerekiyor. Yorgun hissediyorum.",
+      "label": "stresli",
+      "score": 0.88,
+      "energy": 35,
+      "stress": 82,
+      "created_at": "2026-04-29T17:40:06.710587"
+    },
+    {
+      "id": "entry-3",
+      "text": "Sakin bir akşam. Kitap okumak ve kendimle baş başa olmak güzel hissetti.",
+      "label": "dengeli",
+      "score": 0.72,
+      "energy": 65,
+      "stress": 30,
+      "created_at": "2026-04-29T17:40:06.710587"
+    },
+    {
+      "id": "entry-4",
+      "text": "Üzgünüm. Arkadaşımla tartıştık ve arası açıldı. Yalnız hissediyorum.",
+      "label": "üzgün",
+      "score": 0.81,
+      "energy": 40,
+      "stress": 68,
+      "created_at": "2026-04-29T17:40:06.710587"
+    }
+  ]
+}

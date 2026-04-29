@@ -33,8 +33,14 @@ class JournalEntry(BaseModel):
 # 4. /api/emotion/analyze → routes/emotion.py (Gemini AI ile)
 # 5. /api/affirmation/today → routes/affirmation.py (Gemini + ZenQuotes ile)
 # ------------------------------------
-from routes.emotion import router as emotion_router
-from routes.affirmation import router as affirmation_router
+# --- Kişi 1 güncellemesi ---
+# 6. Journal router'ı eklendi (routes/journal.py - Kişi 3) — TODO: Kişi 3 router'ı tamamladığında import et
+# 7. Config.py Gemini API'ye güncellendi (Claude yerine)
+# TODO: Services import sorunları çözüldüğünde emotion ve affirmation router'ları ekle
+# ------------------------------------
+# from routes.emotion import router as emotion_router
+# from routes.affirmation import router as affirmation_router
+# from routes.journal import router as journal_router
 
 app = FastAPI(title="MindFlow API", version="1.0.0")
 
@@ -49,8 +55,9 @@ app.add_middleware(
 # app.mount("/js", StaticFiles(directory=FRONTEND_DIR / "js"), name="js")
 # app.mount("/assets", StaticFiles(directory=FRONTEND_DIR / "assets"), name="assets")
 
-app.include_router(emotion_router)
-app.include_router(affirmation_router)
+# app.include_router(emotion_router)
+# app.include_router(affirmation_router)
+# app.include_router(journal_router)  # TODO: Services ve Kişi 3 yazana kadar bekle
 
 @app.middleware("http")
 async def add_response_time(request: Request, call_next):
@@ -164,6 +171,54 @@ def dashboard_page():
 @app.get("/zen", include_in_schema=False)
 def zen_page():
     return FileResponse(FRONTEND_DIR / "zen.html")
+
+
+@app.on_event("startup")
+def startup_event():
+    """Uygulama başlangıcında mock data yükle (geliştirme için)"""
+    store = load_store()
+    if not store.get("journal"):
+        mock_entries = [
+            {
+                "id": "entry-1",
+                "text": "Bugün çok mutluyum! İş başarısı kazandım ve ekip beni tebrik etti. Harika bir gün oldu.",
+                "label": "mutlu",
+                "score": 0.95,
+                "energy": 85,
+                "stress": 15,
+                "created_at": datetime.utcnow().isoformat(),
+            },
+            {
+                "id": "entry-2",
+                "text": "Stresli bir gün geçirdim. Deadline yakınlaşıyor ve bir sürü şey yapmam gerekiyor. Yorgun hissediyorum.",
+                "label": "stresli",
+                "score": 0.88,
+                "energy": 35,
+                "stress": 82,
+                "created_at": datetime.utcnow().isoformat(),
+            },
+            {
+                "id": "entry-3",
+                "text": "Sakin bir akşam. Kitap okumak ve kendimle baş başa olmak güzel hissetti.",
+                "label": "dengeli",
+                "score": 0.72,
+                "energy": 65,
+                "stress": 30,
+                "created_at": datetime.utcnow().isoformat(),
+            },
+            {
+                "id": "entry-4",
+                "text": "Üzgünüm. Arkadaşımla tartıştık ve arası açıldı. Yalnız hissediyorum.",
+                "label": "üzgün",
+                "score": 0.81,
+                "energy": 40,
+                "stress": 68,
+                "created_at": datetime.utcnow().isoformat(),
+            },
+        ]
+        store["journal"] = mock_entries
+        save_store(store)
+        print("✓ Mock journal data yüklendi")
 
 
 @app.get("/api/health")
