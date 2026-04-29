@@ -20,7 +20,6 @@ type JournalEntry = {
 	score?: number | null
 	energy?: number | null
 	stress?: number | null
-	breakdown?: Record<string, number> | null
 }
 
 function buildAuthHeader(token?: string) {

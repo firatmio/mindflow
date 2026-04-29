@@ -96,7 +96,6 @@ function App() {
         score: emotion?.score ?? null,
         energy: emotion?.energy ?? null,
         stress: emotion?.stress ?? null,
-        breakdown: emotion?.breakdown ?? null,
       }
       await createJournal(payload, token || undefined)
       if (token) {
