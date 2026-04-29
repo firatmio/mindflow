@@ -2,7 +2,7 @@ import firebase_admin
 from firebase_admin import credentials, firestore, auth
 from pathlib import Path
 
-# firebase_key.json ile Firebase'e bağlan (uygulama zaten başlatılmışsa tekrar başlatma)
+# firebase_key.json ile Firebase'e bağlan (uygulama zaten başlatılmışsa tekrar başlatma.)
 KEY_PATH = Path(__file__).resolve().parent.parent / "firebase_key.json"
 
 if not firebase_admin._apps:
