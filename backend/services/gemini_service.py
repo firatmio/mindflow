@@ -1,10 +1,10 @@
 #gemini api çağrıları — duygu analizi ve olumlamalar
 import json
-import google.generativeai as genai
+from google import genai
 from config import GEMINI_API_KEY
 
-genai.configure(api_key=GEMINI_API_KEY)
-model = genai.GenerativeModel("gemini-2.5-flash")
+client = genai.Client(api_key=GEMINI_API_KEY)
+MODEL = "gemini-2.5-flash"
 
 
 def analyze_emotion(text: str) -> dict:
@@ -29,7 +29,7 @@ Metin: "{text}"
   }}
 }}
 """
-    response = model.generate_content(prompt)
+    response = client.models.generate_content(model=MODEL, contents=prompt)
     raw = response.text.strip()
     if raw.startswith("```"):
         raw = raw.split("```")[1]
@@ -51,7 +51,7 @@ Kullanıcıya özel, samimi ve psikolog üslubuyla yazılmış kısa bir rehberl
   "suggestions": ["somut ve uygulanabilir öneri 1", "somut ve uygulanabilir öneri 2"]
 }}
 """
-    response = model.generate_content(prompt)
+    response = client.models.generate_content(model=MODEL, contents=prompt)
     raw = response.text.strip()
     if raw.startswith("```"):
         raw = raw.split("```")[1]
