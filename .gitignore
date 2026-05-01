@@ -5,3 +5,4 @@ __pycache__/
 backend/firebase_key.json
 backend/.env
 .claude/
+*.env.*
