@@ -39,17 +39,19 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       }
       setMessages((prev) => [...prev, botMsg])
 
-      await createJournal(
-        {
-          text,
-          label: result.label ?? null,
-          score: result.score ?? null,
-          energy: result.energy ?? null,
-          stress: result.stress ?? null,
-          breakdown: result.breakdown ?? null,
-        },
-        token ?? undefined,
-      )
+      if (token) {
+        await createJournal(
+          {
+            text,
+            label: result.label ?? null,
+            score: result.score ?? null,
+            energy: result.energy ?? null,
+            stress: result.stress ?? null,
+            breakdown: result.breakdown ?? null,
+          },
+          token,
+        ).catch(() => {})
+      }
     } catch {
       const errorMsg: Message = {
         id: crypto.randomUUID(),
