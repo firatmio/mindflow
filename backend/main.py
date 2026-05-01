@@ -64,17 +64,23 @@ def health():
     return {"message": "MindFlow API çalışıyor", "timestamp": datetime.now(timezone.utc).isoformat()}
 
 
-@app.get("/", include_in_schema=False)
-def landing_page():
-    return FileResponse(FRONTEND_DIR / "index.html")
+# @app.get("/", include_in_schema=False)
+# def landing_page():
+#     return FileResponse(FRONTEND_DIR / "index.html")
 
 
-@app.get("/app", include_in_schema=False)
-@app.get("/dashboard", include_in_schema=False)
-def dashboard_page():
-    return FileResponse(FRONTEND_DIR / "dashboard.html")
+# @app.get("/app", include_in_schema=False)
+# @app.get("/dashboard", include_in_schema=False)
+# def dashboard_page():
+#     return FileResponse(FRONTEND_DIR / "dashboard.html")
 
 
-@app.get("/zen", include_in_schema=False)
-def zen_page():
-    return FileResponse(FRONTEND_DIR / "zen.html")
+# @app.get("/zen", include_in_schema=False)
+# def zen_page():
+#     return FileResponse(FRONTEND_DIR / "zen.html")
+
+# yeni frontend yapısı için yukarıdaki statik dosya servis kodları kaldırıldı. Frontend ayrı bir sunucuda çalışacak.
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="127.0.0.1", port=8000, reload=True)
