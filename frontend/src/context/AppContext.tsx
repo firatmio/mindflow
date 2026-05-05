@@ -1,10 +1,18 @@
-import { createContext, useContext, useState, useEffect, useRef, type ReactNode } from "react"
-import type { LocalJournal } from "../types"
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  type ReactNode,
+} from "react"
+import { useAuth } from "./AuthContext"
+import { fetchChatSessions } from "../services/firestore"
+import type { ChatSession, Message } from "../types"
 
-const JOURNAL_KEY = "mindflow_journals"
 const YT_VIDEO_ID = "zPyg4N7bcHM"
 
-// YouTube IFrame Player minimal tip tanımı
 declare global {
   interface Window {
     YT: {
@@ -30,34 +38,35 @@ type YTPlayerInstance = {
 type AppState = {
   sidebarOpen: boolean
   zenMode: boolean
-  journals: LocalJournal[]
+  chats: ChatSession[]
+  activeChatId: string | null
+  chatsLoading: boolean
   toggleSidebar: () => void
   toggleZen: () => void
   openZen: () => void
   closeZen: () => void
-  addJournal: (entry: Omit<LocalJournal, "id" | "created_at">) => void
+  selectChat: (id: string) => void
+  startNewChat: () => void
+  setActiveChatId: (id: string | null) => void
+  prependChat: (chat: ChatSession) => void
+  updateChatInList: (chatId: string, messages: Message[]) => void
+  refreshChats: () => Promise<void>
 }
 
 const AppContext = createContext<AppState | null>(null)
 
-function loadJournals(): LocalJournal[] {
-  try {
-    const raw = localStorage.getItem(JOURNAL_KEY)
-    return raw ? JSON.parse(raw) : []
-  } catch {
-    return []
-  }
-}
-
 export function AppProvider({ children }: { children: ReactNode }) {
+  const { user } = useAuth()
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [zenMode, setZenMode] = useState(false)
-  const [journals, setJournals] = useState<LocalJournal[]>(loadJournals)
+  const [chats, setChats] = useState<ChatSession[]>([])
+  const [activeChatId, setActiveChatId] = useState<string | null>(null)
+  const [chatsLoading, setChatsLoading] = useState(false)
   const playerRef = useRef<YTPlayerInstance | null>(null)
   const playerReadyRef = useRef(false)
-  // zen modu player hazır olmadan açıldıysa bekletmek için
   const pendingPlayRef = useRef(false)
 
+  // YouTube IFrame Player
   useEffect(() => {
     function initPlayer() {
       playerRef.current = new window.YT.Player("yt-player", {
@@ -74,7 +83,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
         events: {
           onReady: () => {
             playerReadyRef.current = true
-            // Player hazır olduğunda zen açıksa hemen çal
             if (pendingPlayRef.current) {
               playerRef.current?.playVideo()
               pendingPlayRef.current = false
@@ -95,46 +103,73 @@ export function AppProvider({ children }: { children: ReactNode }) {
       }
     }
 
-    return () => {
-      playerRef.current?.destroy()
-    }
+    return () => { playerRef.current?.destroy() }
   }, [])
 
-  // Zen açılınca çal, kapanınca durdur
   useEffect(() => {
     if (zenMode) {
-      if (playerReadyRef.current) {
-        playerRef.current?.playVideo()
-      } else {
-        pendingPlayRef.current = true
-      }
+      if (playerReadyRef.current) playerRef.current?.playVideo()
+      else pendingPlayRef.current = true
     } else {
       pendingPlayRef.current = false
       playerRef.current?.pauseVideo()
     }
   }, [zenMode])
 
-  // Journal değişince localStorage'a kaydet
-  useEffect(() => {
-    localStorage.setItem(JOURNAL_KEY, JSON.stringify(journals))
-  }, [journals])
-
-  function addJournal(entry: Omit<LocalJournal, "id" | "created_at">) {
-    const newEntry: LocalJournal = {
-      ...entry,
-      id: crypto.randomUUID(),
-      created_at: new Date().toISOString(),
+  // Firebase'den chat listesini yükle
+  const refreshChats = useCallback(async () => {
+    if (!user) return
+    setChatsLoading(true)
+    try {
+      const data = await fetchChatSessions(user.uid)
+      setChats(data)
+    } catch { /* silent */ } finally {
+      setChatsLoading(false)
     }
-    setJournals((prev) => [newEntry, ...prev].slice(0, 100))
+  }, [user])
+
+  useEffect(() => {
+    if (user) {
+      refreshChats()
+    } else {
+      setChats([])
+      setActiveChatId(null)
+    }
+  }, [user, refreshChats])
+
+  function selectChat(id: string) { setActiveChatId(id) }
+  function startNewChat() { setActiveChatId(null) }
+
+  function prependChat(chat: ChatSession) {
+    setChats((prev) => [chat, ...prev])
   }
 
-  function toggleSidebar() { setSidebarOpen((p) => !p) }
-  function toggleZen() { setZenMode((p) => !p) }
-  function openZen() { setZenMode(true) }
-  function closeZen() { setZenMode(false) }
+  function updateChatInList(chatId: string, messages: Message[]) {
+    setChats((prev) =>
+      prev.map((c) => (c.id === chatId ? { ...c, messages } : c)),
+    )
+  }
 
   return (
-    <AppContext value={{ sidebarOpen, zenMode, journals, toggleSidebar, toggleZen, openZen, closeZen, addJournal }}>
+    <AppContext
+      value={{
+        sidebarOpen,
+        zenMode,
+        chats,
+        activeChatId,
+        chatsLoading,
+        toggleSidebar: () => setSidebarOpen((p) => !p),
+        toggleZen: () => setZenMode((p) => !p),
+        openZen: () => setZenMode(true),
+        closeZen: () => setZenMode(false),
+        selectChat,
+        startNewChat,
+        setActiveChatId,
+        prependChat,
+        updateChatInList,
+        refreshChats,
+      }}
+    >
       {children}
     </AppContext>
   )

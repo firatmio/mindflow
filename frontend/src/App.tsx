@@ -1,7 +1,6 @@
 import { AuthProvider, useAuth } from "./context/AuthContext"
 import { AppProvider } from "./context/AppContext"
 import { ChatProvider } from "./context/ChatContext"
-import { firebaseConfigured } from "./config/firebase"
 import LoginScreen from "./components/auth/LoginScreen"
 import Header from "./components/layout/Header"
 import Sidebar from "./components/layout/Sidebar"
@@ -11,7 +10,6 @@ import ZenOverlay from "./components/zen/ZenOverlay"
 
 function ChatApp() {
   return (
-    // AppProvider dışarıda — ChatProvider, openZen ve addJournal için AppContext'e ihtiyaç duyuyor
     <AppProvider>
       {/* YouTube IFrame Player — ses için gizli, her zaman DOM'da kalmalı */}
       <div
@@ -47,7 +45,6 @@ function MainApp() {
     )
   }
 
-  if (!firebaseConfigured) return <ChatApp />
   if (!user) return <LoginScreen />
   return <ChatApp />
 }
