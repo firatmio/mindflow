@@ -4,13 +4,13 @@ import { useApp } from "./AppContext"
 import type { Message } from "../types"
 
 type ChatState = {
-  messages: Message[]
-  isAnalyzing: boolean
-  sendMessage: (text: string) => Promise<void>
-  clearChat: () => void
-}
+  messages: Message[];
+  isAnalyzing: boolean;
+  sendMessage: (text: string) => Promise<void>;
+  clearChat: () => void;
+};
 
-const ChatContext = createContext<ChatState | null>(null)
+const ChatContext = createContext<ChatState | null>(null);
 
 export function ChatProvider({ children }: { children: ReactNode }) {
   const { openZen, addJournal } = useApp()
@@ -23,9 +23,9 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       role: "user",
       text,
       timestamp: Date.now(),
-    }
-    setMessages((prev) => [...prev, userMsg])
-    setIsAnalyzing(true)
+    };
+    setMessages((prev) => [...prev, userMsg]);
+    setIsAnalyzing(true);
 
     try {
       const result = await sendChat(text)
@@ -36,8 +36,8 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         text: result.reply,
         label: result.label,
         timestamp: Date.now(),
-      }
-      setMessages((prev) => [...prev, botMsg])
+      };
+      setMessages((prev) => [...prev, botMsg]);
 
       // localStorage'a kaydet
       addJournal({
@@ -62,23 +62,23 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         },
       ])
     } finally {
-      setIsAnalyzing(false)
+      setIsAnalyzing(false);
     }
   }
 
   function clearChat() {
-    setMessages([])
+    setMessages([]);
   }
 
   return (
     <ChatContext value={{ messages, isAnalyzing, sendMessage, clearChat }}>
       {children}
     </ChatContext>
-  )
+  );
 }
 
 export function useChat() {
-  const ctx = useContext(ChatContext)
-  if (!ctx) throw new Error("useChat must be used within ChatProvider")
-  return ctx
+  const ctx = useContext(ChatContext);
+  if (!ctx) throw new Error("useChat must be used within ChatProvider");
+  return ctx;
 }
