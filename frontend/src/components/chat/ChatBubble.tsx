@@ -1,15 +1,15 @@
-import { motion } from "framer-motion"
-import type { Message } from "../../types"
+import { motion } from "framer-motion";
+import type { Message } from "../../types";
 
 const moodEmoji: Record<string, string> = {
   mutlu: "😊",
   üzgün: "😔",
   stresli: "😰",
   dengeli: "🌿",
-}
+};
 
 export default function ChatBubble({ message }: { message: Message }) {
-  const isUser = message.role === "user"
+  const isUser = message.role === "user";
 
   return (
     <motion.div
@@ -26,11 +26,12 @@ export default function ChatBubble({ message }: { message: Message }) {
 
       <div className="max-w-[72%] space-y-1">
         <div
-          className={`rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+          className={`rounded-2xl px-4 py-3 text-sm leading-relaxed chat-içerigi ${
             isUser
               ? "bg-calm-500 text-white rounded-br-sm"
               : "bg-white border border-warm-200 text-gray-700 rounded-bl-sm shadow-sm"
           }`}
+          style={{ userSelect: "text" }}
         >
           {message.text}
         </div>
@@ -42,5 +43,5 @@ export default function ChatBubble({ message }: { message: Message }) {
         )}
       </div>
     </motion.div>
-  )
+  );
 }

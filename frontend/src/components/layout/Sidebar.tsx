@@ -1,10 +1,10 @@
-import { motion, AnimatePresence } from "framer-motion"
-import { useApp } from "../../context/AppContext"
-import MoodChart from "../mood/MoodChart"
-import MoodBadge from "../mood/MoodBadge"
+import { motion, AnimatePresence } from "framer-motion";
+import { useApp } from "../../context/AppContext";
+import MoodChart from "../mood/MoodChart";
+import MoodBadge from "../mood/MoodBadge";
 
 export default function Sidebar() {
-  const { sidebarOpen, journals } = useApp()
+  const { sidebarOpen, journals } = useApp();
 
   return (
     <AnimatePresence>
@@ -41,7 +41,7 @@ export default function Sidebar() {
                   >
                     <div className="flex items-center justify-between">
                       {j.label && <MoodBadge label={j.label} />}
-                      <span className="text-[10px] text-gray-400">
+                      <span className="text-[10px] text-gray-400 chat-içerigi">
                         {new Date(j.created_at).toLocaleDateString("tr-TR", {
                           day: "numeric",
                           month: "short",
@@ -50,7 +50,12 @@ export default function Sidebar() {
                         })}
                       </span>
                     </div>
-                    <p className="text-xs text-gray-500 line-clamp-2">{j.text}</p>
+                    <p
+                      className="text-xs text-gray-500 line-clamp-2"
+                      style={{ userSelect: "text" }}
+                    >
+                      {j.text}
+                    </p>
                   </div>
                 ))}
               </div>
@@ -59,5 +64,5 @@ export default function Sidebar() {
         </motion.aside>
       )}
     </AnimatePresence>
-  )
+  );
 }
