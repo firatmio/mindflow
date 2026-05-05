@@ -13,6 +13,11 @@ function ChatApp() {
   return (
     // AppProvider dışarıda — ChatProvider, openZen ve addJournal için AppContext'e ihtiyaç duyuyor
     <AppProvider>
+      {/* YouTube IFrame Player — ses için gizli, her zaman DOM'da kalmalı */}
+      <div
+        id="yt-player"
+        style={{ position: "fixed", width: 1, height: 1, opacity: 0, pointerEvents: "none", bottom: 0, left: 0 }}
+      />
       <ChatProvider>
         <div className="h-screen flex">
           <Sidebar />

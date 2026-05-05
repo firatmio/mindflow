@@ -2,8 +2,30 @@ import { createContext, useContext, useState, useEffect, useRef, type ReactNode 
 import type { LocalJournal } from "../types"
 
 const JOURNAL_KEY = "mindflow_journals"
-// Ücretsiz lofi müzik — site açılışında önbelleğe alınır
-const LOFI_URL = "https://cdn.pixabay.com/audio/2022/02/22/audio_d1718ab41b.mp3"
+const YT_VIDEO_ID = "zPyg4N7bcHM"
+
+// YouTube IFrame Player minimal tip tanımı
+declare global {
+  interface Window {
+    YT: {
+      Player: new (
+        elementId: string,
+        options: {
+          videoId: string
+          playerVars?: Record<string, unknown>
+          events?: { onReady?: () => void }
+        },
+      ) => YTPlayerInstance
+    }
+    onYouTubeIframeAPIReady: () => void
+  }
+}
+
+type YTPlayerInstance = {
+  playVideo(): void
+  pauseVideo(): void
+  destroy(): void
+}
 
 type AppState = {
   sidebarOpen: boolean
@@ -31,33 +53,68 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [zenMode, setZenMode] = useState(false)
   const [journals, setJournals] = useState<LocalJournal[]>(loadJournals)
-  const audioRef = useRef<HTMLAudioElement | null>(null)
+  const playerRef = useRef<YTPlayerInstance | null>(null)
+  const playerReadyRef = useRef(false)
+  // zen modu player hazır olmadan açıldıysa bekletmek için
+  const pendingPlayRef = useRef(false)
 
-  // Müziği site yüklenince önbelleğe al
   useEffect(() => {
-    const audio = new Audio(LOFI_URL)
-    audio.loop = true
-    audio.volume = 0.35
-    audio.preload = "auto"
-    audioRef.current = audio
+    function initPlayer() {
+      playerRef.current = new window.YT.Player("yt-player", {
+        videoId: YT_VIDEO_ID,
+        playerVars: {
+          autoplay: 0,
+          controls: 0,
+          mute: 0,
+          loop: 1,
+          playlist: YT_VIDEO_ID,
+          rel: 0,
+          modestbranding: 1,
+        },
+        events: {
+          onReady: () => {
+            playerReadyRef.current = true
+            // Player hazır olduğunda zen açıksa hemen çal
+            if (pendingPlayRef.current) {
+              playerRef.current?.playVideo()
+              pendingPlayRef.current = false
+            }
+          },
+        },
+      })
+    }
+
+    if (window.YT?.Player) {
+      initPlayer()
+    } else {
+      window.onYouTubeIframeAPIReady = initPlayer
+      if (!document.querySelector('script[src*="youtube.com/iframe_api"]')) {
+        const script = document.createElement("script")
+        script.src = "https://www.youtube.com/iframe_api"
+        document.head.appendChild(script)
+      }
+    }
+
     return () => {
-      audio.pause()
+      playerRef.current?.destroy()
     }
   }, [])
 
-  // Zen modu açılınca çal, kapanınca durdur
+  // Zen açılınca çal, kapanınca durdur
   useEffect(() => {
-    const audio = audioRef.current
-    if (!audio) return
     if (zenMode) {
-      audio.currentTime = 0
-      audio.play().catch(() => {})
+      if (playerReadyRef.current) {
+        playerRef.current?.playVideo()
+      } else {
+        pendingPlayRef.current = true
+      }
     } else {
-      audio.pause()
+      pendingPlayRef.current = false
+      playerRef.current?.pauseVideo()
     }
   }, [zenMode])
 
-  // Journal değişince localStorage'a yaz
+  // Journal değişince localStorage'a kaydet
   useEffect(() => {
     localStorage.setItem(JOURNAL_KEY, JSON.stringify(journals))
   }, [journals])
