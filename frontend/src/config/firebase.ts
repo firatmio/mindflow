@@ -1,21 +1,21 @@
-import { initializeApp } from "firebase/app"
+import { initializeApp, type FirebaseApp } from "firebase/app"
 import { getAuth, GoogleAuthProvider } from "firebase/auth"
+import { getFirestore } from "firebase/firestore"
 
 const apiKey = import.meta.env.VITE_FIREBASE_API_KEY
 
 export const firebaseConfigured = !!apiKey
 
-function init() {
-  if (!firebaseConfigured) return { auth: null }
-  const app = initializeApp({
+let app: FirebaseApp | null = null
+if (firebaseConfigured) {
+  app = initializeApp({
     apiKey,
     authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
     projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
     appId: import.meta.env.VITE_FIREBASE_APP_ID,
   })
-  return { auth: getAuth(app) }
 }
 
-const { auth } = init()
-export { auth }
+export const auth = app ? getAuth(app) : null
+export const db = app ? getFirestore(app) : null
 export const googleProvider = new GoogleAuthProvider()
