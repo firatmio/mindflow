@@ -3,13 +3,14 @@ import { X, Music } from "lucide-react"
 import { useApp } from "../../context/AppContext"
 import BreathingCircle from "./BreathingCircle"
 
-const particles = Array.from({ length: 18 }, (_, i) => ({
+// Rastgele yüzen partiküller — doğal, organik hissiyat
+const particles = Array.from({ length: 20 }, (_, i) => ({
   id: i,
-  size: Math.random() * 4 + 2,
+  size: Math.random() * 3 + 1.5,
   x: Math.random() * 100,
   y: Math.random() * 100,
-  duration: Math.random() * 6 + 4,
-  delay: Math.random() * 4,
+  duration: Math.random() * 8 + 6,
+  delay: Math.random() * 5,
 }))
 
 export default function ZenOverlay() {
@@ -22,27 +23,32 @@ export default function ZenOverlay() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.7 }}
+          transition={{ duration: 0.8 }}
           className="fixed inset-0 z-50 flex flex-col items-center justify-center overflow-hidden"
           style={{
-            background: "linear-gradient(135deg, #0f0c29 0%, #1a1040 40%, #0d1b3e 70%, #0a0a1a 100%)",
+            // Derin orman — geceleri huzur veren, yapay zeka değil doğa hissi
+            background:
+              "linear-gradient(160deg, #060e0a 0%, #0c1e13 30%, #081912 55%, #050d09 80%, #060e0b 100%)",
           }}
         >
-          {/* Yüzen partiküller */}
+          {/* Yüzen toz partikülleri — ateşböceği efekti */}
           {particles.map((p) => (
             <motion.div
               key={p.id}
-              className="absolute rounded-full bg-white/10"
+              className="absolute rounded-full"
               style={{
                 width: p.size,
                 height: p.size,
                 left: `${p.x}%`,
                 top: `${p.y}%`,
+                background: "rgba(134, 239, 172, 0.35)",
+                boxShadow: "0 0 6px rgba(134, 239, 172, 0.4)",
               }}
               animate={{
-                y: [0, -30, 0],
-                opacity: [0.1, 0.4, 0.1],
-                scale: [1, 1.3, 1],
+                y: [0, -40, 0],
+                x: [0, 10, -5, 0],
+                opacity: [0, 0.5, 0.2, 0],
+                scale: [0.8, 1.2, 0.8],
               }}
               transition={{
                 duration: p.duration,
@@ -53,39 +59,62 @@ export default function ZenOverlay() {
             />
           ))}
 
-          {/* Arka plan hale efekti */}
+          {/* Yumuşak zemin ışıması */}
           <div
-            className="absolute rounded-full blur-3xl opacity-20 pointer-events-none"
+            className="absolute bottom-0 left-1/2 -translate-x-1/2 pointer-events-none"
             style={{
-              width: 500,
-              height: 500,
-              background: "radial-gradient(circle, #7c3aed 0%, transparent 70%)",
+              width: 600,
+              height: 300,
+              background:
+                "radial-gradient(ellipse at center bottom, rgba(52,211,153,0.07) 0%, transparent 70%)",
             }}
           />
 
-          {/* Kapat butonu */}
+          {/* Kapat */}
           <button
             onClick={closeZen}
-            className="absolute top-6 right-6 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white/60 hover:text-white transition-all cursor-pointer"
+            className="absolute top-6 right-6 p-2.5 rounded-full transition-all cursor-pointer"
+            style={{
+              background: "rgba(255,255,255,0.06)",
+              color: "rgba(255,255,255,0.4)",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = "rgba(255,255,255,0.12)"
+              e.currentTarget.style.color = "rgba(255,255,255,0.8)"
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = "rgba(255,255,255,0.06)"
+              e.currentTarget.style.color = "rgba(255,255,255,0.4)"
+            }}
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
 
           {/* Üst başlık */}
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
+            initial={{ opacity: 0, y: -16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.6 }}
+            transition={{ delay: 0.5, duration: 0.7 }}
             className="absolute top-10 text-center"
           >
-            <p className="text-white/40 text-xs tracking-[0.3em] uppercase mb-1">MindFlow</p>
-            <h1 className="text-white/80 text-xl font-light tracking-wide">Güvendesin</h1>
+            <p
+              className="text-xs tracking-[0.35em] uppercase mb-1.5"
+              style={{ color: "rgba(134,239,172,0.35)" }}
+            >
+              MindFlow · Zen
+            </p>
+            <h1
+              className="text-2xl font-light tracking-wide"
+              style={{ color: "rgba(255,255,255,0.7)" }}
+            >
+              Güvendesin
+            </h1>
           </motion.div>
 
           {/* Nefes çemberi */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.6 }}
           >
             <BreathingCircle />
@@ -93,16 +122,22 @@ export default function ZenOverlay() {
 
           {/* Alt bilgi */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6, duration: 0.6 }}
-            className="absolute bottom-10 flex flex-col items-center gap-3"
+            transition={{ delay: 0.7, duration: 0.6 }}
+            className="absolute bottom-10 flex flex-col items-center gap-2.5"
           >
-            <div className="flex items-center gap-2 text-white/40 text-xs">
-              <Music className="w-3.5 h-3.5" />
+            <div
+              className="flex items-center gap-2 text-xs"
+              style={{ color: "rgba(134,239,172,0.4)" }}
+            >
+              <Music className="w-3 h-3" />
               <span>Lofi müzik çalıyor</span>
             </div>
-            <p className="text-white/20 text-[11px] tracking-widest">
+            <p
+              className="text-[11px] tracking-widest"
+              style={{ color: "rgba(255,255,255,0.15)" }}
+            >
               Bu an geçecek · Sen değerlisin
             </p>
           </motion.div>
