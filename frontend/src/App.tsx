@@ -1,6 +1,6 @@
 import { AuthProvider, useAuth } from "./context/AuthContext"
-import { ChatProvider } from "./context/ChatContext"
 import { AppProvider } from "./context/AppContext"
+import { ChatProvider } from "./context/ChatContext"
 import { firebaseConfigured } from "./config/firebase"
 import LoginScreen from "./components/auth/LoginScreen"
 import Header from "./components/layout/Header"
@@ -11,8 +11,9 @@ import ZenOverlay from "./components/zen/ZenOverlay"
 
 function ChatApp() {
   return (
-    <ChatProvider>
-      <AppProvider>
+    // AppProvider dışarıda — ChatProvider, openZen ve addJournal için AppContext'e ihtiyaç duyuyor
+    <AppProvider>
+      <ChatProvider>
         <div className="h-screen flex">
           <Sidebar />
           <main className="flex-1 flex flex-col min-w-0">
@@ -22,8 +23,8 @@ function ChatApp() {
           </main>
         </div>
         <ZenOverlay />
-      </AppProvider>
-    </ChatProvider>
+      </ChatProvider>
+    </AppProvider>
   )
 }
 

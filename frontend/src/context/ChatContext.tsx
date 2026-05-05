@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, type ReactNode } from "react"
-import { analyzeEmotion, createJournal } from "../api"
-import { useAuth } from "./AuthContext"
-import type { Message, EmotionResult } from "../types"
+import { sendChat } from "../api"
+import { useApp } from "./AppContext"
+import type { Message } from "../types"
 
 type ChatState = {
   messages: Message[]
@@ -13,7 +13,7 @@ type ChatState = {
 const ChatContext = createContext<ChatState | null>(null)
 
 export function ChatProvider({ children }: { children: ReactNode }) {
-  const { token } = useAuth()
+  const { openZen, addJournal } = useApp()
   const [messages, setMessages] = useState<Message[]>([])
   const [isAnalyzing, setIsAnalyzing] = useState(false)
 
@@ -28,38 +28,39 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     setIsAnalyzing(true)
 
     try {
-      const result = await analyzeEmotion(text) as EmotionResult & { text: string }
+      const result = await sendChat(text)
 
       const botMsg: Message = {
         id: crypto.randomUUID(),
         role: "bot",
-        text: result.insight || "Duygularını analiz ettim.",
-        emotion: result,
+        text: result.reply,
+        label: result.label,
         timestamp: Date.now(),
       }
       setMessages((prev) => [...prev, botMsg])
 
-      if (token) {
-        await createJournal(
-          {
-            text,
-            label: result.label ?? null,
-            score: result.score ?? null,
-            energy: result.energy ?? null,
-            stress: result.stress ?? null,
-            breakdown: result.breakdown ?? null,
-          },
-          token,
-        ).catch(() => {})
+      // localStorage'a kaydet
+      addJournal({
+        text,
+        label: result.label,
+        energy: result.energy,
+        stress: result.stress,
+      })
+
+      // Kritik durum → zen modunu otomatik aç
+      if (result.isCritical) {
+        openZen()
       }
     } catch {
-      const errorMsg: Message = {
-        id: crypto.randomUUID(),
-        role: "bot",
-        text: "Bir hata oluştu, lütfen tekrar dene.",
-        timestamp: Date.now(),
-      }
-      setMessages((prev) => [...prev, errorMsg])
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: crypto.randomUUID(),
+          role: "bot",
+          text: "Bağlantı hatası oluştu. Ollama'nın çalıştığından emin ol ve tekrar dene.",
+          timestamp: Date.now(),
+        },
+      ])
     } finally {
       setIsAnalyzing(false)
     }
