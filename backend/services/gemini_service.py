@@ -4,7 +4,7 @@ from google import genai
 from config import GEMINI_API_KEY
 
 client = genai.Client(api_key=GEMINI_API_KEY)
-MODEL = "gemini-2.5-flash"
+MODEL = "gemini-2.0-flash"
 
 
 def analyze_emotion(text: str) -> dict:

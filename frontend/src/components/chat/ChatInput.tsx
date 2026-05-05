@@ -40,7 +40,7 @@ export default function ChatInput() {
           placeholder="Bugün nasıl hissediyorsun?"
           rows={1}
           disabled={isAnalyzing}
-          className="flex-1 resize-none rounded-2xl border border-warm-200 bg-white px-4 py-3 text-sm placeholder-warm-300 focus:outline-none focus:ring-2 focus:ring-calm-300 transition-all disabled:opacity-50"
+          className="flex-1 resize-none rounded-2xl border border-warm-200 bg-white px-4 py-3 text-sm placeholder-warm-300 focus:outline-none focus:ring-2 focus:ring-calm-300 transition-all disabled:opacity-50 hidden-scrollbar"
         />
         <button
           onClick={handleSend}
