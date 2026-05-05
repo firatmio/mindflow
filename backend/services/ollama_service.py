@@ -1,8 +1,9 @@
-import httpx
 import json
 
+import httpx
+
 OLLAMA_URL = "http://localhost:11434"
-MODEL = "gemma2:4b"
+MODEL = "gemma3:4b"
 
 SYSTEM_PROMPT = """Sen MindFlow adlı empatik bir mental sağlık destek chatbotusun.
 Kullanıcı sana Türkçe olarak duygularını ve yaşadıklarını anlatacak.
