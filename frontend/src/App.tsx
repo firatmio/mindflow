@@ -6,12 +6,12 @@ import Header from "./components/layout/Header"
 import Sidebar from "./components/layout/Sidebar"
 import ChatContainer from "./components/chat/ChatContainer"
 import ChatInput from "./components/chat/ChatInput"
+import EmotionPanel from "./components/chat/EmotionPanel"
 import ZenOverlay from "./components/zen/ZenOverlay"
 
 function ChatApp() {
   return (
     <AppProvider>
-      {/* YouTube IFrame Player — ses için gizli, her zaman DOM'da kalmalı */}
       <div
         id="yt-player"
         style={{ position: "fixed", width: 1, height: 1, opacity: 0, pointerEvents: "none", bottom: 0, left: 0 }}
@@ -21,7 +21,11 @@ function ChatApp() {
           <Sidebar />
           <main className="flex-1 flex flex-col min-w-0">
             <Header />
-            <ChatContainer />
+            {/* Chat alanı ve duygu paneli yan yana — panel açılınca chat kısalır */}
+            <div className="flex-1 flex min-h-0">
+              <ChatContainer />
+              <EmotionPanel />
+            </div>
             <ChatInput />
           </main>
         </div>

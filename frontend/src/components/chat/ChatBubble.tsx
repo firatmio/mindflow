@@ -1,4 +1,7 @@
+import { useState } from "react"
 import { motion } from "framer-motion"
+import { MoreHorizontal } from "lucide-react"
+import { useChat } from "../../context/ChatContext"
 import type { Message } from "../../types"
 
 const moodEmoji: Record<string, string> = {
@@ -10,6 +13,10 @@ const moodEmoji: Record<string, string> = {
 
 export default function ChatBubble({ message }: { message: Message }) {
   const isUser = message.role === "user"
+  const hasEmotion = !isUser && !!message.label
+  const { openPanel, panelMessageId } = useChat()
+  const [hovered, setHovered] = useState(false)
+  const isOpen = panelMessageId === message.id
 
   return (
     <motion.div
@@ -17,6 +24,8 @@ export default function ChatBubble({ message }: { message: Message }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.25 }}
       className={`flex ${isUser ? "justify-end" : "justify-start"} items-end gap-2`}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
     >
       {!isUser && (
         <div className="w-7 h-7 rounded-full bg-calm-100 flex items-center justify-center flex-shrink-0 text-sm mb-1">
@@ -24,7 +33,7 @@ export default function ChatBubble({ message }: { message: Message }) {
         </div>
       )}
 
-      <div className="max-w-[72%] space-y-1">
+      <div className="max-w-[68%] space-y-1">
         <div
           className={`rounded-2xl px-4 py-3 text-sm leading-relaxed ${
             isUser
@@ -41,6 +50,22 @@ export default function ChatBubble({ message }: { message: Message }) {
           </p>
         )}
       </div>
+
+      {/* Üç nokta butonu — sadece duygu verisi olan bot mesajlarında */}
+      {hasEmotion && (
+        <button
+          onClick={() => openPanel(message.id)}
+          className="flex-shrink-0 mb-1 p-1 rounded-lg transition-all cursor-pointer"
+          style={{
+            opacity: hovered || isOpen ? 1 : 0,
+            background: isOpen ? "rgba(99,182,160,0.15)" : "transparent",
+            color: isOpen ? "#3d8f78" : "#9ca3af",
+          }}
+          title="Duygu raporunu gör"
+        >
+          <MoreHorizontal className="w-4 h-4" />
+        </button>
+      )}
     </motion.div>
   )
 }

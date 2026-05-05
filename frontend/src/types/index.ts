@@ -13,6 +13,8 @@ export type Message = {
   role: "user" | "bot"
   text: string
   label?: string
+  energy?: number
+  stress?: number
   timestamp: number
 }
 

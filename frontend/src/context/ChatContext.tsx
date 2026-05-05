@@ -8,8 +8,11 @@ import type { Message, ChatSession } from "../types"
 type ChatState = {
   messages: Message[]
   isAnalyzing: boolean
+  panelMessageId: string | null
   sendMessage: (text: string) => Promise<void>
   clearChat: () => void
+  openPanel: (messageId: string) => void
+  closePanel: () => void
 }
 
 const ChatContext = createContext<ChatState | null>(null)
@@ -19,14 +22,15 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth()
   const [messages, setMessages] = useState<Message[]>([])
   const [isAnalyzing, setIsAnalyzing] = useState(false)
+  const [panelMessageId, setPanelMessageId] = useState<string | null>(null)
 
-  // Sidebar'dan chat seçilince o chatin mesajlarını yükle
   const chatsRef = useRef(chats)
   useEffect(() => { chatsRef.current = chats }, [chats])
 
   useEffect(() => {
     if (activeChatId === null) {
       setMessages([])
+      setPanelMessageId(null)
       return
     }
     const chat = chatsRef.current.find((c) => c.id === activeChatId)
@@ -52,6 +56,8 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         role: "bot",
         text: result.reply,
         label: result.label,
+        energy: result.energy,
+        stress: result.stress,
         timestamp: Date.now(),
       }
       const finalMessages = [...withUser, botMsg]
@@ -61,7 +67,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
       if (user) {
         if (activeChatId === null) {
-          // Yeni sohbet — AI'ın ilk yanıtı başlık oluyor
           const newId = await createChatSession(user.uid, result.reply, finalMessages)
           const newChat: ChatSession = {
             id: newId,
@@ -72,7 +77,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
           setActiveChatId(newId)
           prependChat(newChat)
         } else {
-          // Var olan sohbeti güncelle
           await updateChatSession(user.uid, activeChatId, finalMessages)
           updateChatInList(activeChatId, finalMessages)
         }
@@ -93,7 +97,17 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <ChatContext value={{ messages, isAnalyzing, sendMessage, clearChat: () => setMessages([]) }}>
+    <ChatContext
+      value={{
+        messages,
+        isAnalyzing,
+        panelMessageId,
+        sendMessage,
+        clearChat: () => setMessages([]),
+        openPanel: (id) => setPanelMessageId(id),
+        closePanel: () => setPanelMessageId(null),
+      }}
+    >
       {children}
     </ChatContext>
   )
