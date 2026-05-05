@@ -1,36 +1,26 @@
 export type EmotionLabel = "mutlu" | "üzgün" | "stresli" | "dengeli"
 
-export type EmotionResult = {
-  label?: EmotionLabel
-  score?: number
+export type ChatResponse = {
+  reply: string
+  label: EmotionLabel
+  energy: number
+  stress: number
+  isCritical: boolean
+}
+
+export type LocalJournal = {
+  id: string
+  text: string
+  label?: string
   energy?: number
   stress?: number
-  insight?: string
-  suggestions?: string[]
-  breakdown?: Record<string, number>
-}
-
-export type AffirmationResponse = {
-  affirmation: string
-  suggestions: string[]
-  quote: { original: string; translated?: string; author?: string }
-}
-
-export type JournalEntry = {
-  id?: string
-  text: string
-  label?: string | null
-  score?: number | null
-  energy?: number | null
-  stress?: number | null
-  breakdown?: Record<string, number> | null
-  created_at?: string
+  created_at: string
 }
 
 export type Message = {
   id: string
   role: "user" | "bot"
   text: string
-  emotion?: EmotionResult
+  label?: string
   timestamp: number
 }

@@ -1,67 +1,83 @@
-import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from "react"
-import { listJournals, getAffirmation } from "../api"
-import { useAuth } from "./AuthContext"
-import type { JournalEntry, AffirmationResponse } from "../types"
+import { createContext, useContext, useState, useEffect, useRef, type ReactNode } from "react"
+import type { LocalJournal } from "../types"
+
+const JOURNAL_KEY = "mindflow_journals"
+// Ücretsiz lofi müzik — site açılışında önbelleğe alınır
+const LOFI_URL = "https://cdn.pixabay.com/audio/2022/02/22/audio_d1718ab41b.mp3"
 
 type AppState = {
   sidebarOpen: boolean
   zenMode: boolean
-  journals: JournalEntry[]
-  affirmation: AffirmationResponse | null
+  journals: LocalJournal[]
   toggleSidebar: () => void
   toggleZen: () => void
-  refreshJournals: () => Promise<void>
-  refreshAffirmation: () => Promise<void>
+  openZen: () => void
+  closeZen: () => void
+  addJournal: (entry: Omit<LocalJournal, "id" | "created_at">) => void
 }
 
 const AppContext = createContext<AppState | null>(null)
 
+function loadJournals(): LocalJournal[] {
+  try {
+    const raw = localStorage.getItem(JOURNAL_KEY)
+    return raw ? JSON.parse(raw) : []
+  } catch {
+    return []
+  }
+}
+
 export function AppProvider({ children }: { children: ReactNode }) {
-  const { token } = useAuth()
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [zenMode, setZenMode] = useState(false)
-  const [journals, setJournals] = useState<JournalEntry[]>([])
-  const [affirmation, setAffirmation] = useState<AffirmationResponse | null>(null)
+  const [journals, setJournals] = useState<LocalJournal[]>(loadJournals)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
 
-  const refreshJournals = useCallback(async () => {
-    if (!token) return
-    try {
-      const data = await listJournals(token)
-      setJournals(data.items ?? data)
-    } catch { /* silently fail */ }
-  }, [token])
+  // Müziği site yüklenince önbelleğe al
+  useEffect(() => {
+    const audio = new Audio(LOFI_URL)
+    audio.loop = true
+    audio.volume = 0.35
+    audio.preload = "auto"
+    audioRef.current = audio
+    return () => {
+      audio.pause()
+    }
+  }, [])
 
-  const refreshAffirmation = useCallback(async () => {
-    try {
-      const recentLabels = journals
-        .slice(0, 5)
-        .map((j) => j.label)
-        .filter((l): l is string => !!l)
-      const data = await getAffirmation(recentLabels)
-      setAffirmation(data)
-    } catch { /* silently fail */ }
+  // Zen modu açılınca çal, kapanınca durdur
+  useEffect(() => {
+    const audio = audioRef.current
+    if (!audio) return
+    if (zenMode) {
+      audio.currentTime = 0
+      audio.play().catch(() => {})
+    } else {
+      audio.pause()
+    }
+  }, [zenMode])
+
+  // Journal değişince localStorage'a yaz
+  useEffect(() => {
+    localStorage.setItem(JOURNAL_KEY, JSON.stringify(journals))
   }, [journals])
 
-  useEffect(() => {
-    if (token) {
-      refreshJournals()
-      refreshAffirmation()
+  function addJournal(entry: Omit<LocalJournal, "id" | "created_at">) {
+    const newEntry: LocalJournal = {
+      ...entry,
+      id: crypto.randomUUID(),
+      created_at: new Date().toISOString(),
     }
-  }, [token, refreshJournals, refreshAffirmation])
-
-  function toggleSidebar() {
-    setSidebarOpen((p) => !p)
+    setJournals((prev) => [newEntry, ...prev].slice(0, 100))
   }
 
-  function toggleZen() {
-    setZenMode((p) => !p)
-  }
+  function toggleSidebar() { setSidebarOpen((p) => !p) }
+  function toggleZen() { setZenMode((p) => !p) }
+  function openZen() { setZenMode(true) }
+  function closeZen() { setZenMode(false) }
 
   return (
-    <AppContext value={{
-      sidebarOpen, zenMode, journals, affirmation,
-      toggleSidebar, toggleZen, refreshJournals, refreshAffirmation,
-    }}>
+    <AppContext value={{ sidebarOpen, zenMode, journals, toggleSidebar, toggleZen, openZen, closeZen, addJournal }}>
       {children}
     </AppContext>
   )
