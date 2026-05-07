@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="frontend/public/favicon.svg" alt="MindFlow Logo" width="80" />
+<img src="./frontend/public/favicon.svg" alt="MindFlow Logo" width="80" />
 
 # MindFlow
 
