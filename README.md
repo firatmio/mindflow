@@ -39,6 +39,17 @@ MindFlow, kullanıcıların duygusal durumlarını yapay zeka ile analiz edebile
 
 ---
 
+## Ekran Görüntüleri
+
+<div style="display: flex; flex-direction: column; flex-wrap: wrap; gap: 10px; justify-content: center;">
+    <img src="./assets/1.png" alt="Ekran Görüntüsü 1" />
+    <img src="./assets/2.png" alt="Ekran Görüntüsü 2" />
+    <img src="./assets/3.png" alt="Ekran Görüntüsü 3" />
+    <img src="./assets/4.png" alt="Ekran Görüntüsü 4" />
+</div>
+
+---
+
 ## Mimari
 
 ```
