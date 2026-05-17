@@ -2,7 +2,6 @@ import firebase_admin
 from firebase_admin import credentials, firestore, auth
 from pathlib import Path
 
-# firebase_key.json ile Firebase'e bağlan (uygulama zaten başlatılmışsa tekrar başlatma.)
 KEY_PATH = Path(__file__).resolve().parent.parent / "firebase_key.json"
 
 if not firebase_admin._apps:
@@ -13,7 +12,6 @@ db = firestore.client()
 
 
 def add_journal_entry(entry: dict) -> dict:
-    # Firestore'a yeni journal kaydı ekle, otomatik ID ata
     doc_ref = db.collection("journals").document()
     entry["id"] = doc_ref.id
     doc_ref.set(entry)
@@ -21,7 +19,6 @@ def add_journal_entry(entry: dict) -> dict:
 
 
 def get_journal_entries(user_id: str, limit: int = 100) -> list:
-    # Belirli kullanıcıya ait journal kayıtlarını tarihe göre sıralı getir
     docs = (
         db.collection("journals")
         .where("user_id", "==", user_id)
@@ -33,6 +30,5 @@ def get_journal_entries(user_id: str, limit: int = 100) -> list:
 
 
 def verify_token(token: str) -> dict:
-    # Frontend'den gelen token'ı doğrula, kullanıcı bilgilerini döndür
     decoded = auth.verify_id_token(token)
     return {"uid": decoded["uid"], "email": decoded.get("email", "")}

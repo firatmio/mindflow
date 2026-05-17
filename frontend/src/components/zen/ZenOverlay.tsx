@@ -3,7 +3,6 @@ import { X, Music } from "lucide-react"
 import { useApp } from "../../context/AppContext"
 import BreathingCircle from "./BreathingCircle"
 
-// Rastgele yüzen partiküller — doğal, organik hissiyat
 const particles = Array.from({ length: 20 }, (_, i) => ({
   id: i,
   size: Math.random() * 3 + 1.5,
@@ -26,12 +25,10 @@ export default function ZenOverlay() {
           transition={{ duration: 0.8 }}
           className="fixed inset-0 z-50 flex flex-col items-center justify-center overflow-hidden"
           style={{
-            // Derin orman — geceleri huzur veren, yapay zeka değil doğa hissi
             background:
               "linear-gradient(160deg, #060e0a 0%, #0c1e13 30%, #081912 55%, #050d09 80%, #060e0b 100%)",
           }}
         >
-          {/* Yüzen toz partikülleri — ateşböceği efekti */}
           {particles.map((p) => (
             <motion.div
               key={p.id}
@@ -59,7 +56,6 @@ export default function ZenOverlay() {
             />
           ))}
 
-          {/* Yumuşak zemin ışıması */}
           <div
             className="absolute bottom-0 left-1/2 -translate-x-1/2 pointer-events-none"
             style={{
@@ -70,7 +66,6 @@ export default function ZenOverlay() {
             }}
           />
 
-          {/* Kapat */}
           <button
             onClick={closeZen}
             className="absolute top-6 right-6 p-2.5 rounded-full transition-all cursor-pointer"
@@ -90,7 +85,6 @@ export default function ZenOverlay() {
             <X className="w-4 h-4" />
           </button>
 
-          {/* Üst başlık */}
           <motion.div
             initial={{ opacity: 0, y: -16 }}
             animate={{ opacity: 1, y: 0 }}
@@ -111,7 +105,6 @@ export default function ZenOverlay() {
             </h1>
           </motion.div>
 
-          {/* Nefes çemberi */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -120,7 +113,6 @@ export default function ZenOverlay() {
             <BreathingCircle />
           </motion.div>
 
-          {/* Alt bilgi */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}

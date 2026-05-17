@@ -15,7 +15,6 @@ const moodColorHex: Record<string, string> = {
 }
 
 export function generateReport(chats: ChatSession[], userName: string) {
-  // Tüm bot mesajlarından duygu verisi topla
   const emotionMessages = chats.flatMap((chat) =>
     chat.messages
       .filter((m) => m.role === "bot" && m.label)
@@ -46,7 +45,6 @@ export function generateReport(chats: ChatSession[], userName: string) {
     year: "numeric",
   })
 
-  // Chat başına özet satırları
   const chatRows = chats
     .map((chat) => {
       const botMsgs = chat.messages.filter((m) => m.role === "bot" && m.label)
@@ -81,7 +79,6 @@ export function generateReport(chats: ChatSession[], userName: string) {
     })
     .join("")
 
-  // Duygu dağılımı satırları
   const distRows = Object.entries(labelCounts)
     .sort((a, b) => b[1] - a[1])
     .map(([label, count]) => {

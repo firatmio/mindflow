@@ -50,7 +50,6 @@ export default function BreathingCircle() {
 
   return (
     <div className="flex flex-col items-center gap-10">
-      {/* Çember — "hazır ol" aşamasında görünmez */}
       <AnimatePresence>
         {!isReady && (
           <motion.div
@@ -61,7 +60,6 @@ export default function BreathingCircle() {
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="relative"
           >
-            {/* Dış hale */}
             <motion.div
               className="absolute inset-0 rounded-full"
               style={{
@@ -70,7 +68,6 @@ export default function BreathingCircle() {
               animate={{ scale: isExpanded ? 2.4 : 1.2, opacity: isExpanded ? 1 : 0.4 }}
               transition={{ duration: duration / 1000, ease: "easeInOut" }}
             />
-            {/* Ana çember */}
             <motion.div
               className="w-36 h-36 rounded-full"
               style={{
@@ -86,7 +83,6 @@ export default function BreathingCircle() {
         )}
       </AnimatePresence>
 
-      {/* Etiket metni */}
       <AnimatePresence mode="wait">
         <motion.p
           key={phase.type}

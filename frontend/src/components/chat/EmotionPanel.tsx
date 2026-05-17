@@ -40,7 +40,6 @@ export default function EmotionPanel() {
   const { messages, panelMessageId, closePanel } = useChat()
 
   const message = messages.find((m) => m.id === panelMessageId)
-  // Bir önceki kullanıcı mesajını bul
   const msgIndex = messages.findIndex((m) => m.id === panelMessageId)
   const prevUserMsg = msgIndex > 0 ? messages[msgIndex - 1] : null
 
@@ -64,7 +63,6 @@ export default function EmotionPanel() {
             boxShadow: "0 4px 24px rgba(0,0,0,0.06)",
           }}
         >
-          {/* Başlık */}
           <div
             className="flex items-center justify-between px-4 py-3 border-b"
             style={{ borderColor: "#f0e8e0" }}
@@ -85,7 +83,6 @@ export default function EmotionPanel() {
           </div>
 
           <div className="p-4 space-y-4">
-            {/* Kullanıcının ne yazdığı */}
             {prevUserMsg && (
               <div
                 className="rounded-xl p-3 text-xs leading-relaxed"
@@ -98,7 +95,6 @@ export default function EmotionPanel() {
               </div>
             )}
 
-            {/* Duygu etiketi */}
             {message.label && colors && (
               <div
                 className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium"
@@ -109,7 +105,6 @@ export default function EmotionPanel() {
               </div>
             )}
 
-            {/* Enerji & Stres barları */}
             {(message.energy != null || message.stress != null) && (
               <div className="space-y-3">
                 <p className="text-[10px] uppercase tracking-wider" style={{ color: "#b8a898" }}>
@@ -132,7 +127,6 @@ export default function EmotionPanel() {
               </div>
             )}
 
-            {/* Genel yorum */}
             <div
               className="rounded-xl p-3 space-y-1.5"
               style={{ background: "#f9f7f5", border: "1px solid #f0e8e0" }}

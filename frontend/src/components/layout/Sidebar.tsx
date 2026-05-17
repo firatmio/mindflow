@@ -25,7 +25,6 @@ export default function Sidebar() {
   async function handleReport() {
     if (generatingReport || chats.length === 0) return
     setGeneratingReport(true)
-    // Kısa bekleme — "oluşturuyor" animasyonunun görünmesi için
     await new Promise((r) => setTimeout(r, 800))
     const html = generateReport(chats, user?.displayName ?? user?.email ?? "Kullanıcı")
     setGeneratingReport(false)
@@ -47,7 +46,6 @@ export default function Sidebar() {
           className="border-r border-warm-200 bg-warm-50 overflow-hidden flex-shrink-0 flex flex-col"
         >
           <div className="flex flex-col h-full" style={{ width: 272 }}>
-            {/* Yeni sohbet */}
             <div className="p-3 border-b border-warm-200/60">
               <button
                 onClick={startNewChat}
@@ -71,7 +69,6 @@ export default function Sidebar() {
               </button>
             </div>
 
-            {/* Chat listesi */}
             <div className="flex-1 overflow-y-auto p-2 space-y-0.5">
               {chatsLoading && (
                 <div className="flex items-center justify-center py-10 text-warm-300">
@@ -114,7 +111,6 @@ export default function Sidebar() {
               })}
             </div>
 
-            {/* Rapor butonu — sabit altta */}
             <div className="p-3 border-t border-warm-200/60">
               <button
                 onClick={handleReport}
