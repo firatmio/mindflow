@@ -130,5 +130,5 @@ Uygulama `http://localhost:5173` adresinde açılır.
 ---
 
 <div align="center">
-<sub>MindFlow · 2025</sub>
+<sub>MindFlow · 2026</sub>
 </div>
